@@ -4,11 +4,14 @@ import java.util.Random;
 public class Corrida {
     private Carro corredor1;
     private Carro corredor2;
+
     private boolean aprovar;
-    int taxa_vitoria;
-    
+    int taxa_vitoriapl1;
+    int taxa_vitoriapl2;
+
     public Corrida(){
-        this.taxa_vitoria = 0;
+        this.taxa_vitoriapl1 = 50;
+        this.taxa_vitoriapl2 = 50;
         this.aprovar = false;
     }
 
@@ -36,18 +39,65 @@ public class Corrida {
         this.aprovar = aprovar;
     }
 
-    Random tp_pista = new Random();
-    int p = tp_pista.nextInt(2);
-    //0 = pista molhada (PM) ### 1 = pista normal (NM)
-    Random sorte = new Random();
-    int acrescimo = sorte.nextInt(5);
-    //0 ---> 5p ### 1 --> 7p ### 2 --> 10p ### 3 --> 12p ### 4 --> 18p
+   Random sorte = new Random();
+   int tpPista = sorte.nextInt(2);
 
-    public void aprovarCorrida(Piloto pl1, Piloto pl2 ){
-        if(pl1 != pl2) {
-            aprovar = true;
+    public void taxaVitoria(Carro corredor1, Carro corredor2){
+        if(corredor1.getTp_pneu().equals("NM") && tpPista == 0) {
+            taxa_vitoriapl1 += 20;
+        } else if(corredor1.getTp_pneu().equals("PM") && tpPista == 1) {
+            taxa_vitoriapl1 += 20;
+        } else if(corredor1.getTp_pneu().equals("NM") && tpPista == 1) {
+            taxa_vitoriapl1 -= 20;
+        } else if(corredor1.getTp_pneu().equals("PM") && tpPista == 0) {
+            taxa_vitoriapl1 -= 20;
+        }
+        if(corredor2.getTp_pneu().equals("NM") && tpPista == 0) {
+            taxa_vitoriapl2 += 20;
+        } else if(corredor2.getTp_pneu().equals("PM") && tpPista == 1) {
+            taxa_vitoriapl2 += 20;
+        } else if(corredor2.getTp_pneu().equals("NM") && tpPista == 1) {
+            taxa_vitoriapl2 -= 20;
+        } else if(corredor2.getTp_pneu().equals("PM") && tpPista == 0) {
+            taxa_vitoriapl2 -= 20;
+        }
+
+        if(corredor1.getVel_atual() > corredor2.getVel_atual()) {
+            taxa_vitoriapl1 += 15;
+        } else if(corredor1.getVel_atual() < corredor2.getVel_atual()){
+            taxa_vitoriapl2 += 15;
         } else {
-            System.out.println("A corrida não pode acontecer");
+            taxa_vitoriapl2 += 10;
+            taxa_vitoriapl1 += 10;
+        }
+
+        if(corredor1.getVel_atual() >= (corredor1.getVel_max() * 80)/100) {
+           taxa_vitoriapl1 += 25;
+        } else if(corredor1.getVel_atual() >= (corredor1.getVel_max() * 50)/100) {
+            taxa_vitoriapl1 += 15;
+        } else {
+            taxa_vitoriapl1 += 10;
+        }
+
+        if(corredor2.getVel_atual() >= (corredor2.getVel_max() * 80)/100) {
+            taxa_vitoriapl2 += 25;
+        } else if(corredor2.getVel_atual() >= (corredor2.getVel_max() * 50)/100) {
+            taxa_vitoriapl2 += 15;
+        } else {
+            taxa_vitoriapl2 += 10;
+        }
+
+    }
+
+    public void corrida(Carro corredor1, Carro corredor2, Piloto pl1, Piloto pl2){
+        if(taxa_vitoriapl1 > taxa_vitoriapl2) {
+            System.out.println("E O CAMPEÃO FOI O !!" + pl1.getNome());
+            corredor1.apresentar(pl1);
+        } else if(taxa_vitoriapl1 < taxa_vitoriapl2) {
+            System.out.println("E O CAMPEÃO FOI O !!" + pl2.getNome());
+            corredor2.apresentar(pl2);
+        } else {
+            System.out.println("Ouve um empate!!");
         }
     }
 
